@@ -26,16 +26,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static org.ballerinalang.plugins.idea.psi.BallerinaTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import org.ballerinalang.plugins.idea.psi.*;
-import com.intellij.psi.PsiReference;
 
-public class BallerinaFunctionNameImpl extends ASTWrapperPsiElement implements BallerinaFunctionName {
+public class BallerinaFullyQualifiedfunctionNameImpl extends ASTWrapperPsiElement implements BallerinaFullyQualifiedfunctionName {
 
-  public BallerinaFunctionNameImpl(ASTNode node) {
+  public BallerinaFullyQualifiedfunctionNameImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull BallerinaVisitor visitor) {
-    visitor.visitFunctionName(this);
+    visitor.visitFullyQualifiedfunctionName(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -45,12 +44,14 @@ public class BallerinaFunctionNameImpl extends ASTWrapperPsiElement implements B
 
   @Override
   @NotNull
-  public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+  public BallerinaFunctionName getFunctionName() {
+    return findNotNullChildByClass(BallerinaFunctionName.class);
   }
 
-  public PsiReference getReference() {
-    return BallerinaPsiImplUtil.getReference(this);
+  @Override
+  @Nullable
+  public BallerinaPackageName getPackageName() {
+    return findChildByClass(BallerinaPackageName.class);
   }
 
 }

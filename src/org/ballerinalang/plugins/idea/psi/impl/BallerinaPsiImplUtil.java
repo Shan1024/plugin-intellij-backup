@@ -17,7 +17,9 @@
 package org.ballerinalang.plugins.idea.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import org.ballerinalang.plugins.idea.psi.BallerinaFunctionDefinition;
+import com.intellij.psi.PsiReference;
+import org.ballerinalang.plugins.idea.BallerinaFunctionReference;
+import org.ballerinalang.plugins.idea.psi.BallerinaFunctionName;
 import org.ballerinalang.plugins.idea.psi.BallerinaPackageDeclaration;
 import org.ballerinalang.plugins.idea.psi.BallerinaTypes;
 
@@ -35,13 +37,7 @@ public class BallerinaPsiImplUtil {
         }
     }
 
-    public static String getFunctionName(BallerinaFunctionDefinition element) {
-        ASTNode keyNode = element.getNode().getTreeNext();
-        if (keyNode != null) {
-            // IMPORTANT: Convert embedded escaped spaces to simple spaces
-            return keyNode.getText().replaceAll("\\\\ ", " ");
-        } else {
-            return null;
-        }
+    public static PsiReference getReference(BallerinaFunctionName element) {
+        return new BallerinaFunctionReference(element);
     }
 }

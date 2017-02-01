@@ -30,6 +30,9 @@ public interface BallerinaFunctionDefinition extends PsiElement {
   BallerinaFunctionBody getFunctionBody();
 
   @Nullable
+  BallerinaFunctionName getFunctionName();
+
+  @Nullable
   BallerinaNativeFunctionDefinition getNativeFunctionDefinition();
 
   @Nullable
@@ -38,6 +41,7 @@ public interface BallerinaFunctionDefinition extends PsiElement {
   @Nullable
   BallerinaReturnParameters getReturnParameters();
 
-  String getFunctionName();
+  @Nullable
+  PsiElement getIdentifier();
 
 }

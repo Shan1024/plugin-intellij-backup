@@ -48,6 +48,7 @@ public interface BallerinaTypes {
   IElementType EXPRESSION = new BallerinaElementType("EXPRESSION");
   IElementType EXPRESSION_LIST = new BallerinaElementType("EXPRESSION_LIST");
   IElementType FORK_JOIN_STATEMENT = new BallerinaElementType("FORK_JOIN_STATEMENT");
+  IElementType FULLY_QUALIFIEDFUNCTION_NAME = new BallerinaElementType("FULLY_QUALIFIEDFUNCTION_NAME");
   IElementType FUNCTION_BODY = new BallerinaElementType("FUNCTION_BODY");
   IElementType FUNCTION_DEFINITION = new BallerinaElementType("FUNCTION_DEFINITION");
   IElementType FUNCTION_INVOCATION_STATEMENT = new BallerinaElementType("FUNCTION_INVOCATION_STATEMENT");
@@ -264,6 +265,9 @@ public interface BallerinaTypes {
       }
       else if (type == FORK_JOIN_STATEMENT) {
         return new BallerinaForkJoinStatementImpl(node);
+      }
+      else if (type == FULLY_QUALIFIEDFUNCTION_NAME) {
+        return new BallerinaFullyQualifiedfunctionNameImpl(node);
       }
       else if (type == FUNCTION_BODY) {
         return new BallerinaFunctionBodyImpl(node);

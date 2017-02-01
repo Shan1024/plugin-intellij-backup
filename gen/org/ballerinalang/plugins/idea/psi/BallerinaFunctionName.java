@@ -20,13 +20,13 @@ package org.ballerinalang.plugins.idea.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 
 public interface BallerinaFunctionName extends PsiElement {
 
-  @Nullable
-  BallerinaPackageName getPackageName();
-
   @NotNull
   PsiElement getIdentifier();
+
+  PsiReference getReference();
 
 }

@@ -49,7 +49,8 @@
                                        implementationClass="org.ballerinalang.plugins.idea.highlighter.BallerinaSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="org.ballerinalang.plugins.idea.highlighter.BallerinaColorSettingsPage"/>
 
-        <annotator language="Ballerina" implementationClass="org.ballerinalang.plugins.idea.highlighter.BallerinaAnnotator"/>
+        <annotator language="Ballerina"
+                   implementationClass="org.ballerinalang.plugins.idea.highlighter.BallerinaAnnotator"/>
 
         <!-- formatter -->
         <lang.formatter language="Ballerina"
@@ -75,6 +76,9 @@
                 implementation="org.ballerinalang.plugins.idea.run.configuration.application.BallerinaApplicationRunConfigurationType"/>
         <configurationType
                 implementation="org.ballerinalang.plugins.idea.run.configuration.service.BallerinaServiceRunConfigurationType"/>
+
+        <lang.elementManipulator forClass="org.ballerinalang.plugins.idea.psi.impl.BallerinaFunctionNameImpl"
+                                 implementationClass="org.ballerinalang.plugins.idea.psi.impl.manipulator.BallerinaStringManipulator"/>
 
     </extensions>
 

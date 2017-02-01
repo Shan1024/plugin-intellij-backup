@@ -114,6 +114,9 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
     else if (t == FORK_JOIN_STATEMENT) {
       r = forkJoinStatement(b, 0);
     }
+    else if (t == FULLY_QUALIFIEDFUNCTION_NAME) {
+      r = fullyQualifiedfunctionName(b, 0);
+    }
     else if (t == FUNCTION_BODY) {
       r = functionBody(b, 0);
     }
@@ -521,7 +524,7 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // backtickString                                                      // templateExpression
-  //     |   functionName argumentList                                           // functionInvocationExpression
+  //     |   fullyQualifiedfunctionName argumentList                                           // functionInvocationExpression
   //     |   actionInvocation argumentList                                       // actionInvocationExpression
   //     |   '[' expressionList ']'                                              // arrayInitializerExpression
   //     |   '{' mapInitKeyValueList '}'                                         // mapInitializerExpression
@@ -550,12 +553,12 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // functionName argumentList
+  // fullyQualifiedfunctionName argumentList
   private static boolean basicExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "basicExpression_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = functionName(b, l + 1);
+    r = fullyQualifiedfunctionName(b, l + 1);
     r = r && argumentList(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -1305,6 +1308,37 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // (packageName ':')? functionName
+  public static boolean fullyQualifiedfunctionName(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fullyQualifiedfunctionName")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = fullyQualifiedfunctionName_0(b, l + 1);
+    r = r && functionName(b, l + 1);
+    exit_section_(b, m, FULLY_QUALIFIEDFUNCTION_NAME, r);
+    return r;
+  }
+
+  // (packageName ':')?
+  private static boolean fullyQualifiedfunctionName_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fullyQualifiedfunctionName_0")) return false;
+    fullyQualifiedfunctionName_0_0(b, l + 1);
+    return true;
+  }
+
+  // packageName ':'
+  private static boolean fullyQualifiedfunctionName_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "fullyQualifiedfunctionName_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = packageName(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // connectorDeclaration* variableDeclaration* workerDeclaration* statement+
   public static boolean functionBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionBody")) return false;
@@ -1371,7 +1405,7 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // annotation* 'public'? 'function' Identifier '(' parameterList? ')' returnParameters? ('throws' Identifier)? '{' functionBody '}'
+  // annotation* 'public'? 'function' functionName '(' parameterList? ')' returnParameters? ('throws' Identifier)? '{' functionBody '}'
   //     |   nativeFunctionDefinition
   public static boolean functionDefinition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDefinition")) return false;
@@ -1383,14 +1417,16 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // annotation* 'public'? 'function' Identifier '(' parameterList? ')' returnParameters? ('throws' Identifier)? '{' functionBody '}'
+  // annotation* 'public'? 'function' functionName '(' parameterList? ')' returnParameters? ('throws' Identifier)? '{' functionBody '}'
   private static boolean functionDefinition_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDefinition_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = functionDefinition_0_0(b, l + 1);
     r = r && functionDefinition_0_1(b, l + 1);
-    r = r && consumeTokens(b, 0, FUNCTION, IDENTIFIER, LPAREN);
+    r = r && consumeToken(b, FUNCTION);
+    r = r && functionName(b, l + 1);
+    r = r && consumeToken(b, LPAREN);
     r = r && functionDefinition_0_5(b, l + 1);
     r = r && consumeToken(b, RPAREN);
     r = r && functionDefinition_0_7(b, l + 1);
@@ -1453,13 +1489,13 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // functionName argumentList ';'
+  // fullyQualifiedfunctionName argumentList ';'
   public static boolean functionInvocationStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionInvocationStatement")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = functionName(b, l + 1);
+    r = fullyQualifiedfunctionName(b, l + 1);
     r = r && argumentList(b, l + 1);
     r = r && consumeToken(b, SEMI);
     exit_section_(b, m, FUNCTION_INVOCATION_STATEMENT, r);
@@ -1467,33 +1503,14 @@ public class BallerinaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (packageName ':')? Identifier
+  // Identifier
   public static boolean functionName(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionName")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = functionName_0(b, l + 1);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, FUNCTION_NAME, r);
-    return r;
-  }
-
-  // (packageName ':')?
-  private static boolean functionName_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionName_0")) return false;
-    functionName_0_0(b, l + 1);
-    return true;
-  }
-
-  // packageName ':'
-  private static boolean functionName_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "functionName_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = packageName(b, l + 1);
-    r = r && consumeToken(b, COLON);
-    exit_section_(b, m, null, r);
     return r;
   }
 

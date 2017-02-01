@@ -27,6 +27,6 @@ public interface BallerinaFunctionInvocationStatement extends PsiElement {
   BallerinaArgumentList getArgumentList();
 
   @NotNull
-  BallerinaFunctionName getFunctionName();
+  BallerinaFullyQualifiedfunctionName getFullyQualifiedfunctionName();
 
 }

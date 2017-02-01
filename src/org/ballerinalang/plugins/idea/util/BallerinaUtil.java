@@ -16,6 +16,7 @@
 
 package org.ballerinalang.plugins.idea.util;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -24,7 +25,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -33,8 +33,10 @@ import com.intellij.util.indexing.FileBasedIndex;
 import org.ballerinalang.plugins.idea.BallerinaFileType;
 import org.ballerinalang.plugins.idea.psi.BallerinaFile;
 import org.ballerinalang.plugins.idea.psi.BallerinaFunctionDefinition;
+import org.ballerinalang.plugins.idea.psi.BallerinaFunctionName;
 import org.ballerinalang.plugins.idea.psi.BallerinaPackageDeclaration;
 import org.ballerinalang.plugins.idea.psi.BallerinaPackageName;
+import org.ballerinalang.plugins.idea.psi.BallerinaTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -164,60 +166,26 @@ public class BallerinaUtil {
         return result;
     }
 
-
-    public static List<String> findAllImportedFunctions(Project project, PsiFile psiFile) {
-        List<String> result = new ArrayList<String>();
+    public static List<BallerinaFunctionName> findFunctionName(Project project, String functionName) {
+        List<BallerinaFunctionName> result = new ArrayList<BallerinaFunctionName>();
         Collection<VirtualFile> virtualFiles =
                 FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, BallerinaFileType.INSTANCE,
                         GlobalSearchScope.allScope(project));
         for (VirtualFile virtualFile : virtualFiles) {
             BallerinaFile ballerinaFile = (BallerinaFile) PsiManager.getInstance(project).findFile(virtualFile);
             if (ballerinaFile != null) {
-                BallerinaPackageDeclaration[] properties = PsiTreeUtil.getChildrenOfType(ballerinaFile,
-                        BallerinaPackageDeclaration.class);
-                if (properties != null) {
-                    for (BallerinaPackageDeclaration packageDeclaration : properties) {
-                        result.add(packageDeclaration.getRealPackageName());
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    public static List<String> findAllRealPackageDeclarations(Project project) {
-        List<String> result = new ArrayList<String>();
-        Collection<VirtualFile> virtualFiles =
-                FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, BallerinaFileType.INSTANCE,
-                        GlobalSearchScope.allScope(project));
-        for (VirtualFile virtualFile : virtualFiles) {
-            BallerinaFile ballerinaFile = (BallerinaFile) PsiManager.getInstance(project).findFile(virtualFile);
-            if (ballerinaFile != null) {
-                BallerinaPackageDeclaration[] properties = PsiTreeUtil.getChildrenOfType(ballerinaFile,
-                        BallerinaPackageDeclaration.class);
-                if (properties != null) {
-                    for (BallerinaPackageDeclaration packageDeclaration : properties) {
-                        result.add(packageDeclaration.getRealPackageName());
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    public static List<String> findAllFunctionDeclarations(Project project) {
-        List<String> result = new ArrayList<String>();
-        Collection<VirtualFile> virtualFiles =
-                FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, BallerinaFileType.INSTANCE,
-                        GlobalSearchScope.allScope(project));
-        for (VirtualFile virtualFile : virtualFiles) {
-            BallerinaFile ballerinaFile = (BallerinaFile) PsiManager.getInstance(project).findFile(virtualFile);
-            if (ballerinaFile != null) {
-                BallerinaFunctionDefinition[] functions = PsiTreeUtil.getChildrenOfType(ballerinaFile,
+                BallerinaFunctionDefinition[] functionDefinitions = PsiTreeUtil.getChildrenOfType(ballerinaFile,
                         BallerinaFunctionDefinition.class);
-                if (functions != null) {
-                    for (BallerinaFunctionDefinition function : functions) {
-                        result.add(function.getFunctionName());
+                if (functionDefinitions != null) {
+                    for (BallerinaFunctionDefinition functionDefinition : functionDefinitions) {
+                        ASTNode childByType = functionDefinition.getNode().findChildByType(
+                                BallerinaTypes.FUNCTION_NAME);
+                        if (childByType == null) {
+                            continue;
+                        }
+                        if (functionName.equals(childByType.getText())) {
+                            result.add(functionDefinition.getFunctionName());
+                        }
                     }
                 }
             }

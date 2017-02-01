@@ -50,8 +50,8 @@ public class BallerinaFunctionInvocationStatementImpl extends ASTWrapperPsiEleme
 
   @Override
   @NotNull
-  public BallerinaFunctionName getFunctionName() {
-    return findNotNullChildByClass(BallerinaFunctionName.class);
+  public BallerinaFullyQualifiedfunctionName getFullyQualifiedfunctionName() {
+    return findNotNullChildByClass(BallerinaFullyQualifiedfunctionName.class);
   }
 
 }

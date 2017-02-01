@@ -68,8 +68,8 @@ public class BallerinaExpressionImpl extends ASTWrapperPsiElement implements Bal
 
   @Override
   @NotNull
-  public List<BallerinaFunctionName> getFunctionNameList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, BallerinaFunctionName.class);
+  public List<BallerinaFullyQualifiedfunctionName> getFullyQualifiedfunctionNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, BallerinaFullyQualifiedfunctionName.class);
   }
 
   @Override

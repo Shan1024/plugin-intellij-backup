@@ -82,15 +82,15 @@ public class BallerinaAnnotator implements Annotator {
             }
         }
 
-        if (element instanceof BallerinaFunctionName) {
-            BallerinaPackageName packageName = ((BallerinaFunctionName) element).getPackageName();
-            List<String> allPackageDeclarations =
-                    BallerinaUtil.findAllImportedFunctions(project, psiFile);
-
-            if (packageName != null && !allPackageDeclarations.contains(packageName.getText())) {
-                holder.createErrorAnnotation(packageName, "Invalid package name");
-
-            }
-        }
+//        if (element instanceof BallerinaFunctionName) {
+//            BallerinaPackageName packageName = ((BallerinaFunctionName) element).getPackageName();
+//            List<String> allPackageDeclarations =
+//                    BallerinaUtil.findAllImportedFunctions(project, psiFile);
+//
+//            if (packageName != null && !allPackageDeclarations.contains(packageName.getText())) {
+//                holder.createErrorAnnotation(packageName, "Invalid package name");
+//
+//            }
+//        }
     }
 }

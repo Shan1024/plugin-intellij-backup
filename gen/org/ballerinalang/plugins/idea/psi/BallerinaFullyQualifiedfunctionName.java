@@ -21,36 +21,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface BallerinaExpression extends PsiElement {
+public interface BallerinaFullyQualifiedfunctionName extends PsiElement {
 
   @NotNull
-  List<BallerinaActionInvocation> getActionInvocationList();
+  BallerinaFunctionName getFunctionName();
 
-  @NotNull
-  List<BallerinaArgumentList> getArgumentListList();
-
-  @NotNull
-  List<BallerinaBacktickString> getBacktickStringList();
-
-  @NotNull
-  List<BallerinaExpressionList> getExpressionListList();
-
-  @NotNull
-  List<BallerinaFullyQualifiedfunctionName> getFullyQualifiedfunctionNameList();
-
-  @NotNull
-  List<BallerinaLiteralValue> getLiteralValueList();
-
-  @NotNull
-  List<BallerinaMapInitKeyValueList> getMapInitKeyValueListList();
-
-  @NotNull
-  List<BallerinaPackageName> getPackageNameList();
-
-  @NotNull
-  List<BallerinaTypeName> getTypeNameList();
-
-  @NotNull
-  List<BallerinaVariableReference> getVariableReferenceList();
+  @Nullable
+  BallerinaPackageName getPackageName();
 
 }

@@ -171,10 +171,12 @@ resourceDefinition
     ::=   annotation* 'resource' Identifier '(' parameterList ')' '{' functionBody '}'
 
 functionDefinition
-    ::=   annotation* 'public'? 'function' Identifier '(' parameterList? ')' returnParameters? ('throws' Identifier)? '{' functionBody '}'
-    |   nativeFunctionDefinition {
-        methods=[getFunctionName]
-    }
+    ::=   annotation* 'public'? 'function' functionName '(' parameterList? ')' returnParameters? ('throws' Identifier)? '{' functionBody '}'
+    |   nativeFunctionDefinition
+
+functionName::= Identifier{
+    methods=[getReference]
+}
 
 nativeFunctionDefinition
     ::=   annotation* 'native' 'function' Identifier '(' parameterList? ')' returnParameters? ('throws' Identifier)? ';'
@@ -450,10 +452,10 @@ expressionList
     ::=   expression (',' expression)*
 
 functionInvocationStatement
-    ::=   functionName argumentList ';'
+    ::=   fullyQualifiedfunctionName argumentList ';'
 
-functionName
-    ::=   (packageName ':')? Identifier
+fullyQualifiedfunctionName
+    ::=   (packageName ':')? functionName
 
 actionInvocation
     ::=   packageName ':' Identifier '.' Identifier
@@ -469,7 +471,7 @@ expression::=
 
 private basicExpression::=
         backtickString                                                      // templateExpression
-    |   functionName argumentList                                           // functionInvocationExpression
+    |   fullyQualifiedfunctionName argumentList                                           // functionInvocationExpression
     |   actionInvocation argumentList                                       // actionInvocationExpression
     |   '[' expressionList ']'                                              // arrayInitializerExpression
     |   '{' mapInitKeyValueList '}'                                         // mapInitializerExpression

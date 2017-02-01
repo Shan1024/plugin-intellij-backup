@@ -123,6 +123,10 @@ public class BallerinaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFullyQualifiedfunctionName(@NotNull BallerinaFullyQualifiedfunctionName o) {
+    visitPsiElement(o);
+  }
+
   public void visitFunctionBody(@NotNull BallerinaFunctionBody o) {
     visitPsiElement(o);
   }
