@@ -41,18 +41,19 @@ public class PackageNameReference extends BallerinaElementReference {
     @NotNull
     @Override
     public Object[] getVariants() {
-        return BallerinaPsiImplUtil.suggestPackages(getElement());
+//        return BallerinaPsiImplUtil.suggestPackages(getElement());
+        return new Object[0];
     }
 
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
         //Todo: Use java8
-        PsiDirectory[] directories = BallerinaPsiImplUtil.resolveDirectory(getElement());
+//        PsiDirectory[] directories = BallerinaPsiImplUtil.resolveDirectory(getElement());
         List<ResolveResult> results = new ArrayList<>();
-        for (PsiDirectory directory : directories) {
-            results.add(new PsiElementResolveResult(directory));
-        }
+//        for (PsiDirectory directory : directories) {
+//            results.add(new PsiElementResolveResult(directory));
+//        }
         return results.toArray(new ResolveResult[results.size()]);
     }
 }

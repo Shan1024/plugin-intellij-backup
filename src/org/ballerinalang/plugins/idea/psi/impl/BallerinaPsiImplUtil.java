@@ -331,7 +331,7 @@ public class BallerinaPsiImplUtil {
             if (count == packages.size()) {
                 //Todo - Use caching if needed
                 for (VirtualFile file : root.getChildren()) {
-                    if (file.isDirectory()) {
+                    if (file.isDirectory() && !file.getName().startsWith(".")) {
                         results.add(file);
                     }
                 }
@@ -345,6 +345,17 @@ public class BallerinaPsiImplUtil {
             count++;
         }
         return results;
+    }
+
+    public static boolean hasSubdirectories(PsiDirectory directory) {
+        VirtualFile virtualFile = directory.getVirtualFile();
+        VirtualFile[] children = virtualFile.getChildren();
+        for (VirtualFile child : children) {
+            if (child.isDirectory()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
