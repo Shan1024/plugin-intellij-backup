@@ -17,6 +17,7 @@
 package org.ballerinalang.plugins.idea.sdk;
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -28,17 +29,25 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.ballerinalang.plugins.idea.BallerinaConstants;
+import org.ballerinalang.plugins.idea.project.BallerinaLibraryService;
+import org.ballerinalang.plugins.idea.project.GoApplicationLibrariesService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.intellij.util.containers.ContainerUtil.newLinkedHashSet;
 
 public class BallerinaSdkUtil {
 
@@ -160,4 +169,72 @@ public class BallerinaSdkUtil {
         }
         return "";
     }
+
+    @NotNull
+    public static Collection<VirtualFile> getGoPathsRootsFromEnvironment() {
+        return BallerinaPathModificationTracker.getGoEnvironmentGoPathRoots();
+    }
+
+    @NotNull
+    private static List<VirtualFile> getInnerGoPathSources(@NotNull Project project, @Nullable Module module) {
+        return ContainerUtil.mapNotNull(getGoPathRoots(project, module), new RetrieveSubDirectoryOrSelfFunction("src"));
+    }
+
+    @NotNull
+    public static Collection<VirtualFile> getGoPathRoots(@NotNull Project project, @Nullable Module module) {
+        Collection<VirtualFile> roots = ContainerUtil.newArrayList();
+        if (GoApplicationLibrariesService.getInstance().isUseGoPathFromSystemEnvironment()) {
+            roots.addAll(getGoPathsRootsFromEnvironment());
+        }
+        roots.addAll(module != null ? BallerinaLibraryService.getUserDefinedLibraries(module) :
+                BallerinaLibraryService.getUserDefinedLibraries(project));
+        return roots;
+    }
+//
+//    @NotNull
+//    public static Collection<VirtualFile> getGoPathSources(@NotNull Project project, @Nullable Module module) {
+//        if (module != null) {
+//            return CachedValuesManager.getManager(project).getCachedValue(module, () -> {
+//                Collection<VirtualFile> result = newLinkedHashSet();
+//                Project project1 = module.getProject();
+//                GoSdkService sdkService = GoSdkService.getInstance(project1);
+//                if (sdkService.isAppEngineSdk(module)) {
+//                    ContainerUtil.addAllNotNull(result, ContainerUtil.mapNotNull(YamlFilesModificationTracker.getYamlFiles(project1, module),
+//                            VirtualFile::getParent));
+//                }
+//                result.addAll(getInnerGoPathSources(project1, module));
+//                return CachedValueProvider.Result
+//                        .create(result, getSdkAndLibrariesCacheDependencies(project1, module, YamlFilesModificationTracker.getInstance(project1)));
+//            });
+//        }
+//        return CachedValuesManager.getManager(project).getCachedValue(project,
+//                (CachedValueProvider<Collection<VirtualFile>>)() -> CachedValueProvider.Result
+//                        .create(getInnerGoPathSources(project, null),
+//                                getSdkAndLibrariesCacheDependencies(project, null, YamlFilesModificationTracker.getInstance(project))));
+//    }
+
+    private static class RetrieveSubDirectoryOrSelfFunction implements Function<VirtualFile, VirtualFile> {
+        @NotNull private final String mySubdirName;
+
+        public RetrieveSubDirectoryOrSelfFunction(@NotNull String subdirName) {
+            mySubdirName = subdirName;
+        }
+
+        @Override
+        public VirtualFile fun(VirtualFile file) {
+            return file == null || FileUtil.namesEqual(mySubdirName, file.getName()) ? file : file.findChild(mySubdirName);
+        }
+    }
+
+//    @NotNull
+//    private static Collection<Object> getSdkAndLibrariesCacheDependencies(@NotNull Project project,
+//                                                                          @Nullable Module module,
+//                                                                          Object... extra) {
+//        Collection<Object> dependencies = ContainerUtil.newArrayList((Object[])BallerinaSdkService.getModificationTrackers(project,
+//                module));
+//        ContainerUtil.addAllNotNull(dependencies, GoSdkService.getInstance(project));
+//        ContainerUtil.addAllNotNull(dependencies, extra);
+//        return dependencies;
+//    }
+
 }

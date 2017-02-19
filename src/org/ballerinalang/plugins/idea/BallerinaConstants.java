@@ -36,4 +36,8 @@ public class BallerinaConstants {
     public static final NotificationGroup BALLERINA_NOTIFICATION_GROUP =
             NotificationGroup.balloonGroup("Ballerina plugin notifications");
 
+    public static final String BALLERINA_REPOSITORY = "GOPATH";
+    public static final String GO_LIBRARIES_SERVICE_NAME = "GoLibraries";
+    public static final String GO_LIBRARIES_CONFIG_FILE = "goLibraries.xml";
+    public static final String GO_MODULE_SESTTINGS_SERVICE_NAME = "Go";
 }

@@ -18,6 +18,7 @@ package org.ballerinalang.plugins.idea.sdk;
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Set;
 
-public class BallerinaSdkService {
+public class BallerinaSdkService extends SimpleModificationTracker {
 
     public static final Logger LOG = Logger.getInstance(BallerinaSdkService.class);
     private static final Set<String> FEDORA_SUBDIRECTORIES = ContainerUtil.newHashSet("linux_amd64", "linux_386",

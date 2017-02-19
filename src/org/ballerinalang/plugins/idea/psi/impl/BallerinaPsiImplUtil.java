@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -37,6 +38,7 @@ import org.antlr.jetbrains.adaptor.psi.Trees;
 import org.antlr.jetbrains.adaptor.xpath.XPath;
 import org.ballerinalang.plugins.idea.BallerinaFileType;
 import org.ballerinalang.plugins.idea.BallerinaLanguage;
+import org.ballerinalang.plugins.idea.project.GoApplicationLibrariesService;
 import org.ballerinalang.plugins.idea.psi.AliasNode;
 import org.ballerinalang.plugins.idea.psi.ExpressionNode;
 import org.ballerinalang.plugins.idea.psi.FunctionInvocationStatementNode;
@@ -46,6 +48,7 @@ import org.ballerinalang.plugins.idea.psi.PackageNameNode;
 import org.ballerinalang.plugins.idea.psi.PackageNameReference;
 import org.ballerinalang.plugins.idea.psi.PackagePathNode;
 import org.ballerinalang.plugins.idea.psi.ParameterNode;
+import org.ballerinalang.plugins.idea.sdk.BallerinaSdkUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -360,6 +363,25 @@ public class BallerinaPsiImplUtil {
                 }
             }
         }
+
+        // Todo - Suggest packages from BALLERINA_REPOSITORY
+        // Todo - Suggest packages from user defined libraries
+        boolean useBallerinaRepository =
+                GoApplicationLibrariesService.getInstance().isUseGoPathFromSystemEnvironment();
+
+        if (useBallerinaRepository) {
+            Collection<VirtualFile> pathRoots = BallerinaSdkUtil.getGoPathsRootsFromEnvironment();
+            // Todo - Open src dir by default
+            for (VirtualFile pathRoot : pathRoots) {
+                matches = suggestDirectory(pathRoot, packages);
+                if (matches != null) {
+                    for (VirtualFile file : matches) {
+                        results.add(PsiManager.getInstance(project).findDirectory(file));
+                    }
+                }
+            }
+        }
+
         return results.toArray(new PsiDirectory[results.size()]);
     }
 
